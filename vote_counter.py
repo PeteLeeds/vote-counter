@@ -1,5 +1,8 @@
 import json
 import re
+import functools
+
+tiebreak_list = {}
 
 def get_multiline_input():
     items = []
@@ -87,6 +90,28 @@ def ask_for_clarification(vote, potential_keys, keys):
     int_response = validate_int_response(response, 1, len(keys))
     return keys[int_response - 1]
 
+def add_to_tiebreak_list(name, score, count):
+    if not name in tiebreak_list:
+        tiebreak_list[name] = [[score, count]]
+    elif not [score, count] in tiebreak_list[name]:
+        tiebreak_list[name].append([score, count])
+
+
+def sort_scores(x, y):
+    if (x[1]['points'] != y[1]['points']):
+        return x[1]['points'] - y[1]['points']
+    score_set = set(x[1]['votes'] + y[1]['votes'])
+    sorted_score_set = sorted(score_set, reverse=True)
+    for score in sorted_score_set:
+        x_appearances = x[1]['votes'].count(score)
+        y_appearances = y[1]['votes'].count(score)
+        add_to_tiebreak_list(x[0], score, x_appearances)
+        add_to_tiebreak_list(y[0], score, y_appearances)
+        if (x_appearances != y_appearances):
+            return x_appearances - y_appearances
+    return 0
+    
+
 
 # Initialise file
 try:
@@ -159,10 +184,11 @@ while (response != '-1'):
                 current_series_json = current_json_state[current_series]
             except:
                 input('Invalid selection. Press enter to continue')
-            sorted_series = sorted(current_series_json.items(), key=lambda x:x[1]['points'])
+            tiebreak_list = {}
+            sorted_series = sorted(current_series_json.items(), key=(functools.cmp_to_key(sort_scores)))
             sorted_series.reverse()
             for item in sorted_series:
-                print(f"{item[0]} - {item[1]['points']} points")
+                print(f"{item[0]} - {item[1]['points']} points {tiebreak_list[item[0]] if item[0] in tiebreak_list else ''}")
             input('Press enter to continue')
 
     
