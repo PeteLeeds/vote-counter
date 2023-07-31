@@ -112,7 +112,18 @@ def sort_scores(x, y):
         if (x_appearances != y_appearances):
             return x_appearances - y_appearances
     return 0
-    
+
+def get_tiebreak_string(item):
+    if not item in tiebreak_list:
+        return ''
+    sorted_tiebreak_list = sorted(tiebreak_list[item], key=lambda x:x[0])
+    sorted_tiebreak_list.reverse()
+    tiebreak_string = ''
+    for val in sorted_tiebreak_list:
+        if len(tiebreak_string) != 0:
+            tiebreak_string += ', '
+        tiebreak_string += f"{val[1]} x {val[0]}"
+    return f"({tiebreak_string})"
 
 
 # Initialise file
@@ -189,8 +200,10 @@ while (response != '-1'):
             tiebreak_list = {}
             sorted_series = sorted(current_series_json.items(), key=(functools.cmp_to_key(sort_scores)))
             sorted_series.reverse()
+            index = 1
             for item in sorted_series:
-                print(f"{item[0]} - {item[1]['points']} points {tiebreak_list[item[0]] if item[0] in tiebreak_list else ''}")
+                print(f"{index}: {item[0]} - {item[1]['points']} points {get_tiebreak_string(item[0])}")
+                index += 1
             input('Press enter to continue')
 
     
