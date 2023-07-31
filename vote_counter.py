@@ -55,6 +55,8 @@ def get_key(vote, keys):
         for part in key_parts:
             if key_added:
                 continue
+            if (len(part) <= 1):
+                continue
             if (part.upper() in vote.upper()):
                 likely_keys.append(key)
                 key_added = True
