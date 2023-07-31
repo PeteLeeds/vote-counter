@@ -174,7 +174,7 @@ while (response != '-1'):
         else:
             continue
         keys = list(current_json_state[current_series].keys())
-        print('Please copy and paste the first set of votes')
+        print('Please copy and paste your set of votes')
         votes = get_multiline_input()
         for vote in votes:
             score = get_first_number(vote)
