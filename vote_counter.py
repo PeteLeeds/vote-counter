@@ -46,6 +46,8 @@ def validate_int_response(response, min, max):
 def get_key(vote, keys):
     likely_keys = []
     potential_keys = []
+    first_space = vote.find(' ')
+    vote = vote[first_space + 1:]
     for key in keys:
         if key.upper() in vote.upper() or vote.upper() in key.upper():
             # Definite match
